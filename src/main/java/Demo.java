@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.DigestInputStream;
@@ -39,7 +40,11 @@ public class Demo {
         /*
          * Alice can now send messages to Bob.
          */
+        System.out.println("Plaintext Message being sent to Bob: "+messageFromAlice);
+
         PreKeySignalMessage toBobMessage = aliceToBobSession.encrypt(messageFromAlice);
+
+        System.out.println("Ciphertext message sent to Bob : "+new String(toBobMessage.getWhisperMessage().getBody(), StandardCharsets.UTF_8));
 
         /*
          * For Bob to read them, Bob must know Alice.
@@ -49,6 +54,7 @@ public class Demo {
         /*
          * Now Bob can decrypt them.
          */
+
         String decryptedAliceMessage = bobToAliceSession.decrypt(toBobMessage);
 
         if (!decryptedAliceMessage.equals(messageFromAlice)) {
@@ -60,7 +66,11 @@ public class Demo {
         /*
          * Bob, too, can send messages to Alice.
          */
+        System.out.println("Plaintext Message being sent to Alice: "+messageFromBob);
+
         PreKeySignalMessage toAliceMessage = bobToAliceSession.encrypt(messageFromBob);
+
+        System.out.println("Ciphertext message sent to Alice : "+new String(toAliceMessage.getWhisperMessage().getBody(), StandardCharsets.UTF_8));
 
 
         /*
@@ -75,6 +85,10 @@ public class Demo {
         }
 
 
+        System.out.println();
+        System.out.println();
+
+
         /*
          * Bob can send a file (here, an image from "resources" directory of this project) to Alice
          * */
@@ -84,7 +98,7 @@ public class Demo {
 
 
         /*
-         * Alice can now decrypt the file received from Bob in encrypted format
+         * Alice can now decrypt the encrypted file received from Bob
          * */
         File outputFile = aliceToBobSession.decryptFile(toAliceFileMessage);
 
@@ -98,7 +112,7 @@ public class Demo {
         System.out.println("Hash of output file: "+outputFileHash);
 
         if(inputFileHash.equals(outputFileHash)){
-            System.out.println("Files successfully sent and received by both Alice and Bob!");
+            System.out.println("Files successfully sent and received by Alice and Bob!");
         }else{
             System.out.println("File sent by Bob doesn't match to that received by Alice :(");
         }

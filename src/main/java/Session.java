@@ -5,7 +5,7 @@
  */
 
 import java.io.*;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.whispersystems.libsignal.InvalidKeyException;
 import org.whispersystems.libsignal.SessionBuilder;
@@ -18,7 +18,6 @@ import org.whispersystems.libsignal.state.PreKeyBundle;
 import org.whispersystems.libsignal.state.SignalProtocolStore;
 
 public class Session {
-    private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private /* static */ enum Operation {ENCRYPT, DECRYPT;}
 
@@ -59,7 +58,7 @@ public class Session {
     public PreKeySignalMessage encrypt(String message) throws UntrustedIdentityException {
         SessionCipher cipher = getCipher(Operation.ENCRYPT);
 
-        CiphertextMessage ciphertext = cipher.encrypt(message.getBytes(UTF8));
+        CiphertextMessage ciphertext = cipher.encrypt(message.getBytes(StandardCharsets.UTF_8));
         byte[] rawCiphertext = ciphertext.serialize();
 
         try {
@@ -77,7 +76,7 @@ public class Session {
         try {
             byte[] decrypted = cipher.decrypt(ciphertext);
 
-            return new String(decrypted, UTF8);
+            return new String(decrypted, StandardCharsets.UTF_8);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
