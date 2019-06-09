@@ -117,6 +117,7 @@ public class Demo {
             System.out.println("File sent by Bob doesn't match to that received by Alice :(");
         }
 
+
     }
 
     private static String getHash(File file) throws IOException, NoSuchAlgorithmException {
