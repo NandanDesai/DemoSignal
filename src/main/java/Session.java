@@ -1,22 +1,10 @@
 /*
  * DemoSignal — Demonstrate the signal protocol.
  * Copyright (C) 2017 Vijay Lakshminarayanan <lvijay@gmail.com>.
- *
- * This program is free software: you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
- * details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Modified by Nandan Desai
  */
-package hacking.signal;
 
+import java.io.*;
 import java.nio.charset.Charset;
 
 import org.whispersystems.libsignal.InvalidKeyException;
@@ -32,7 +20,7 @@ import org.whispersystems.libsignal.state.SignalProtocolStore;
 public class Session {
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
-    private /* static */ enum Operation { ENCRYPT, DECRYPT; }
+    private /* static */ enum Operation {ENCRYPT, DECRYPT;}
 
     private final SignalProtocolStore self;
     private PreKeyBundle otherKeyBundle;
@@ -41,9 +29,8 @@ public class Session {
     private SessionCipher cipher;
 
     public Session(SignalProtocolStore self,
-            PreKeyBundle otherKeyBundle,
-            SignalProtocolAddress otherAddress)
-    {
+                   PreKeyBundle otherKeyBundle,
+                   SignalProtocolAddress otherAddress) {
         this.self = self;
         this.otherKeyBundle = otherKeyBundle;
         this.otherAddress = otherAddress;
@@ -69,7 +56,7 @@ public class Session {
         return cipher;
     }
 
-    public PreKeySignalMessage encrypt(String message) {
+    public PreKeySignalMessage encrypt(String message) throws UntrustedIdentityException {
         SessionCipher cipher = getCipher(Operation.ENCRYPT);
 
         CiphertextMessage ciphertext = cipher.encrypt(message.getBytes(UTF8));
@@ -94,5 +81,45 @@ public class Session {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public PreKeySignalMessage encryptFile(File inputFile) {
+        SessionCipher cipher = getCipher(Operation.ENCRYPT);
+
+        try {
+
+            byte[] bytesArray = new byte[(int) inputFile.length()];
+
+            FileInputStream fileInputStream = new FileInputStream(inputFile);
+            fileInputStream.read(bytesArray);
+            fileInputStream.close();
+
+            CiphertextMessage ciphertextMessage = cipher.encrypt(bytesArray);
+
+            byte[] rawCiphertext = ciphertextMessage.serialize();
+            return new PreKeySignalMessage(rawCiphertext);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public File decryptFile(PreKeySignalMessage ciphertext) {
+        SessionCipher cipher = getCipher(Operation.DECRYPT);
+
+        String outputFileName = "decryptedImage.jpg";
+
+        try {
+            byte[] decrypted = cipher.decrypt(ciphertext);
+            OutputStream outputStream = new FileOutputStream(outputFileName);
+
+            outputStream.write(decrypted);
+            outputStream.close();
+            return new File(outputFileName);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
