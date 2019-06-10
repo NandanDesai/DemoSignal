@@ -1,8 +1,13 @@
-/*
+package signal.demo.one_on_one;/*
  * DemoSignal — Demonstrate the signal protocol.
  * Copyright (C) 2017 Vijay Lakshminarayanan <lvijay@gmail.com>.
  * Modified by Nandan Desai
  */
+
+import org.whispersystems.libsignal.protocol.PreKeySignalMessage;
+import signal.demo.Entity;
+import sun.misc.BASE64Encoder;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,9 +18,6 @@ import java.nio.file.Paths;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import org.whispersystems.libsignal.protocol.PreKeySignalMessage;
-import sun.misc.BASE64Encoder;
 
 public class Demo {
     public static void main(String[] args) throws Exception {

@@ -1,4 +1,4 @@
-package sample_templates;
+package signal.demo.sample_templates;
 
 import org.whispersystems.libsignal.*;
 import org.whispersystems.libsignal.state.PreKeyRecord;
@@ -8,9 +8,12 @@ import org.whispersystems.libsignal.state.SignedPreKeyRecord;
 
 import java.io.IOException;
 import java.util.List;
+
 /*
 * This class is just a template for those who want to write their own SignalProtocolStore with storing and retrieving data
 * from actual database.
+*
+* This template is based on https://github.com/signalapp/Signal-Android repo.
 * */
 public class MySignalKeyStore implements SignalProtocolStore {
 
@@ -24,7 +27,7 @@ public class MySignalKeyStore implements SignalProtocolStore {
             save(context, IDENTITY_PUBLIC_KEY_PREF, sample_templates.Base64.encodeBytes(djbIdentityKey.serialize()));
             save(context, IDENTITY_PRIVATE_KEY_PREF, sample_templates.Base64.encodeBytes(djbPrivateKey.serialize()));
 
-            Then over here,return them like this:
+            and then over here,return them like this:
 
             IdentityKey publicKey=new IdentityKey(sample_templates.Base64.decode(retrieve(context, IDENTITY_PUBLIC_KEY_PREF)), 0);
             ECPrivateKey privateKey = Curve.decodePrivatePoint(sample_templates.Base64.decode(retrieve(context, IDENTITY_PRIVATE_KEY_PREF)));
@@ -95,7 +98,7 @@ public class MySignalKeyStore implements SignalProtocolStore {
 
     @Override
     public void storePreKey(int preKeyId, PreKeyRecord record) {
-        String publicKey=Base64.encodeBytes(record.getKeyPair().getPublicKey().serialize());
+        String publicKey= Base64.encodeBytes(record.getKeyPair().getPublicKey().serialize());
         String privateKey= Base64.encodeBytes(record.getKeyPair().getPrivateKey().serialize());
 
         //insert preKeyId, publicKey, privateKey into the database
@@ -190,9 +193,9 @@ public class MySignalKeyStore implements SignalProtocolStore {
     @Override
     public void storeSignedPreKey(int signedPreKeyId, SignedPreKeyRecord record) {
         int keyId=signedPreKeyId;
-        String publicKey=Base64.encodeBytes(record.getKeyPair().getPublicKey().serialize());
-        String privateKey=Base64.encodeBytes(record.getKeyPair().getPrivateKey().serialize());
-        String signature=Base64.encodeBytes(record.getSignature());
+        String publicKey= Base64.encodeBytes(record.getKeyPair().getPublicKey().serialize());
+        String privateKey= Base64.encodeBytes(record.getKeyPair().getPrivateKey().serialize());
+        String signature= Base64.encodeBytes(record.getSignature());
         long timestamp=record.getTimestamp();
 
         //store all these in the database

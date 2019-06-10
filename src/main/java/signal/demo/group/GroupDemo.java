@@ -1,26 +1,32 @@
+package signal.demo.group;
+
 import org.whispersystems.libsignal.*;
 import org.whispersystems.libsignal.groups.GroupCipher;
+import org.whispersystems.libsignal.groups.GroupSessionBuilder;
 import org.whispersystems.libsignal.groups.SenderKeyName;
 import org.whispersystems.libsignal.protocol.SenderKeyDistributionMessage;
+import signal.demo.Entity;
 
 import java.nio.charset.StandardCharsets;
 
 public class GroupDemo {
     public static void main(String[] args) throws InvalidKeyException, NoSessionException, LegacyMessageException, DuplicateMessageException, InvalidMessageException {
 
+
         /*
-        * There is a class called as SenderKeyName which is just a (groupId {or groupName} + senderId {or address} + deviceId) tuple
-        * This SenderKeyName is used to store the corresponding Keys of the message sender of a group. The store is called
-        * SenderKeyStore. This SenderKeyStore is used by GroupSessionBuilder to build a group session to encrypt and decrypt messages
-        * sent and received from/to a group.
-        *
-        * In my class Entity, both SenderKeyStore and GroupSessionBuilder are included.
-        * For demonstration purposes, SenderKeyStore will just store and fetch keys to/from the memory using the InMemorySenderKeyStore
-        * class present in this package.
+        * Create three entities
         * */
         Entity alpha = new Entity(1, 314159, "Alpha");
         Entity bravo = new Entity(2, 271828, "Bravo");
         Entity charlie = new Entity(3, 123456, "Charlie");
+
+
+        /*
+        * Build group session builder for each of them
+        * */
+        GroupSessionBuilder alphaSessionBuilder = new GroupSessionBuilder(alpha.getSenderKeyStore());
+        GroupSessionBuilder bravoSessionBuilder = new GroupSessionBuilder(bravo.getSenderKeyStore());
+        GroupSessionBuilder charlieSessionBuilder = new GroupSessionBuilder(charlie.getSenderKeyStore());
 
         String groupName="Political Discussions";
 
@@ -42,14 +48,14 @@ public class GroupDemo {
         /*
         * Charlie first sends a key distribution message to the other members of the group
         * */
-        SenderKeyDistributionMessage charlieKeyDistributionMessage = charlie.getGroupSessionBuilder().create(charlieGroupSender);
+        SenderKeyDistributionMessage charlieKeyDistributionMessage = charlieSessionBuilder.create(charlieGroupSender);
 
 
         /*
         * Alpha and Bravo will process (store in SenderKeyStore) Charlie's SenderKeyName and KeyDistributionMessage and they'll get ready to decrypt Charlie's messages
         * */
-        alpha.getGroupSessionBuilder().process(charlieGroupSender, charlieKeyDistributionMessage);
-        bravo.getGroupSessionBuilder().process(charlieGroupSender, charlieKeyDistributionMessage);
+        alphaSessionBuilder.process(charlieGroupSender, charlieKeyDistributionMessage);
+        bravoSessionBuilder.process(charlieGroupSender, charlieKeyDistributionMessage);
 
         String charlieGroupMessage="Hi guys! This is Charlie!!";
 

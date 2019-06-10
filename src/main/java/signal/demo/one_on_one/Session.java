@@ -1,21 +1,20 @@
-/*
+package signal.demo.one_on_one;/*
  * DemoSignal — Demonstrate the signal protocol.
  * Copyright (C) 2017 Vijay Lakshminarayanan <lvijay@gmail.com>.
  * Modified by Nandan Desai
  */
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-
-import org.whispersystems.libsignal.InvalidKeyException;
-import org.whispersystems.libsignal.SessionBuilder;
-import org.whispersystems.libsignal.SessionCipher;
-import org.whispersystems.libsignal.SignalProtocolAddress;
-import org.whispersystems.libsignal.UntrustedIdentityException;
+import org.whispersystems.libsignal.*;
 import org.whispersystems.libsignal.protocol.CiphertextMessage;
 import org.whispersystems.libsignal.protocol.PreKeySignalMessage;
 import org.whispersystems.libsignal.state.PreKeyBundle;
 import org.whispersystems.libsignal.state.SignalProtocolStore;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class Session {
 
